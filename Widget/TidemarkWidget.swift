@@ -141,7 +141,8 @@ struct TidemarkWidgetView: View {
         default:
             VStack(spacing: 4) {
                 Text(L.emptyTitle).font(.system(size: 15, weight: .semibold))
-                Text(L.widgetEmpty).font(.system(size: 12)).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                Text(Store.sharedContainerAvailable ? L.widgetEmpty : (L.zh ? "签名缺少 App Group，小组件读不到日子" : "Signed without the App Group, so widgets can’t read your days"))
+                    .font(.system(size: 12)).foregroundStyle(.secondary).multilineTextAlignment(.center)
             }
         }
     }
@@ -240,5 +241,8 @@ struct TidemarkWidget: Widget {
 
 @main
 struct TidemarkWidgets: WidgetBundle {
-    var body: some Widget { TidemarkWidget() }
+    var body: some Widget {
+        TidemarkWidget()
+        CheckWidget()
+    }
 }
