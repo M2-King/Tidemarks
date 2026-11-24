@@ -27,6 +27,32 @@ struct StaticProvider: TimelineProvider {
     }
 }
 
+/// A day chosen in Edit Widget (SiriKit intent; App Intents widgets don't render on re-signed installs).
+struct PickProvider: IntentTimelineProvider {
+    typealias Intent = PickDayIntent
+
+    func placeholder(in context: Context) -> DayEntry {
+        DayEntry(date: Date(), today: Days.today(), list: Logic.sorted(Logic.seed(), today: Days.today()))
+    }
+    func getSnapshot(for configuration: PickDayIntent, in context: Context, completion: @escaping (DayEntry) -> Void) {
+        let e = make(configuration, Date())
+        completion(e.list.isEmpty && context.isPreview ? placeholder(in: context) : e)
+    }
+    func getTimeline(for configuration: PickDayIntent, in context: Context, completion: @escaping (Timeline<DayEntry>) -> Void) {
+        let now = Date()
+        let midnight = Calendar.current.startOfDay(for: now.addingTimeInterval(86_400)).addingTimeInterval(5)
+        completion(Timeline(entries: [make(configuration, now), make(configuration, midnight)], policy: .after(midnight)))
+    }
+    private func make(_ c: PickDayIntent, _ date: Date) -> DayEntry {
+        let today = Days.today(date)
+        var list = Logic.sorted(Store.load() ?? [], today: today)
+        if let id = c.day?.identifier, let i = list.firstIndex(where: { $0.id == id }) {
+            list.insert(list.remove(at: i), at: 0)
+        }
+        return DayEntry(date: date, today: today, list: list)
+    }
+}
+
 // MARK: - Pieces
 
 private func name(_ e: DayEvent) -> String { e.title.isEmpty ? L.untitled : e.title }
@@ -257,9 +283,24 @@ struct TidemarkStaticWidget: Widget {
     }
 }
 
+/// Each widget shows the day picked in Edit Widget.
+struct TidemarkPickWidget: Widget {
+    var body: some WidgetConfiguration {
+        IntentConfiguration(kind: "TidemarkPick", intent: PickDayIntent.self, provider: PickProvider()) { entry in
+            TidemarkWidgetView(entry: entry)
+                .containerBackground(for: .widget) { Color(.systemBackground) }
+        }
+        .configurationDisplayName(Text(L.widgetName + (L.zh ? " · 选择日子" : " · Choose a Day")))
+        .description(Text(L.zh ? "长按小组件 → 编辑小组件，选择要显示的日子。" : "Touch and hold → Edit Widget to choose a day."))
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge,
+                            .accessoryCircular, .accessoryRectangular, .accessoryInline])
+    }
+}
+
 @main
 struct TidemarkWidgets: WidgetBundle {
     var body: some Widget {
+        TidemarkPickWidget()
         TidemarkStaticWidget()
     }
 }
