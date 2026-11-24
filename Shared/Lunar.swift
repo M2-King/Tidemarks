@@ -7,7 +7,7 @@ enum Lunar {
 
     private static let cal: Calendar = {
         var c = Calendar(identifier: .chinese)
-        c.timeZone = TimeZone(identifier: "UTC")!
+        c.timeZone = TimeZone(identifier: "Asia/Shanghai")!  // lunar months start by China time
         return c
     }()
     private static let lock = NSLock()
@@ -21,7 +21,7 @@ enum Lunar {
 
     private static func fromSolarLocked(_ n: Int) -> Day {
         if let hit = dayCache[n] { return hit }
-        let date = Date(timeIntervalSince1970: Double(n) * 86400 + 43200)
+        let date = Date(timeIntervalSince1970: Double(n) * 86400 + 4 * 3600)  // 12:00 in China
         let c = cal.dateComponents([.month, .day, .isLeapMonth], from: date)
         let m = c.month ?? 1, d = c.day ?? 1
         let g = Days.ymd(n)

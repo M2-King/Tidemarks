@@ -24,7 +24,7 @@ struct EditView: View {
     init(target: EditTarget, onSaved: @escaping (String) -> Void) {
         let ev: DayEvent
         switch target {
-        case .new: ev = DayEvent(); isNew = true
+        case .new: ev = DayEvent(remind: Prefs.defaultRemind, remindTime: Prefs.defaultTime); isNew = true
         case .edit(let e): ev = e; isNew = false
         }
         self.onSaved = onSaved

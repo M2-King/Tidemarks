@@ -2,10 +2,39 @@ import Foundation
 
 /// Interface text in Chinese or English, following the device's preferred language.
 enum L {
-    static let zh: Bool = (Locale.preferredLanguages.first ?? "en").lowercased().hasPrefix("zh")
+    private static let systemZh: Bool = (Locale.preferredLanguages.first ?? "en").lowercased().hasPrefix("zh")
+    static var zh: Bool {
+        switch Prefs.language {
+        case "zh": return true
+        case "en": return false
+        default: return systemZh
+        }
+    }
     private static func t(_ c: String, _ e: String) -> String { zh ? c : e }
 
     static var appTitle: String { t("汐日", "Tidemark") }
+    static var settings: String { t("设置", "Settings") }
+    static var sAppearance: String { t("外观", "Appearance") }
+    static var sSystem: String { t("跟随系统", "System") }
+    static var sLight: String { t("浅色", "Light") }
+    static var sDark: String { t("深色", "Dark") }
+    static var sLanguage: String { t("语言", "Language") }
+    static var sReminders: String { t("新日子的默认提醒", "Default Reminder for New Days") }
+    static var sReminderFooter: String { t("每个日子都可以在编辑时单独修改。", "You can still change it for each day when editing.") }
+    static var sNotifications: String { t("通知", "Notifications") }
+    static var sStatus: String { t("状态", "Status") }
+    static var sOn: String { t("已开启", "On") }
+    static var sOff: String { t("已关闭", "Off") }
+    static var sNotAsked: String { t("尚未请求（设置提醒时会询问）", "Not asked yet (asked when you set a reminder)") }
+    static var sOpenSettings: String { t("在系统设置中开启", "Turn On in Settings") }
+    static var sWidgets: String { t("小组件", "Widgets") }
+    static var sWidgetData: String { t("数据共享", "Data Sharing") }
+    static var sAvailable: String { t("正常", "Working") }
+    static var sUnavailable: String { t("不可用", "Unavailable") }
+    static var sWidgetOK: String { t("小组件可以读取你的日子。", "Widgets can read your days.") }
+    static var sWidgetBad: String { t("此签名没有 App Group，小组件无法读取你的日子。请用支持 App Group 的证书重新签名。", "This signature has no App Group, so widgets can’t read your days. Re-sign with a certificate that supports App Groups.") }
+    static var sAbout: String { t("关于", "About") }
+    static var sVersion: String { t("版本", "Version") }
     static var upcoming: String { t("倒数", "Upcoming") }
     static var since: String { t("正数", "Since") }
     static var newEvent: String { t("新建日子", "New Day") }

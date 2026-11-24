@@ -17,6 +17,7 @@ struct RootView: View {
     @State private var selection: String?
     @State private var editing: EditTarget?
     @State private var detail: DayEvent?
+    @State private var showSettings = false
     @Namespace private var ns
     private let ticker = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
@@ -26,7 +27,7 @@ struct RootView: View {
         GeometryReader { geo in
             let wide = geo.size.width >= 700
             HStack(spacing: 0) {
-                Sidebar(wide: wide, selection: selection, ns: ns, onAdd: { editing = .new }, onOpen: { ev in
+                Sidebar(wide: wide, selection: selection, ns: ns, onAdd: { editing = .new }, onSettings: { showSettings = true }, onOpen: { ev in
                     if wide { withAnimation(Theme.spring) { selection = ev.id } } else { detail = ev }
                 })
                 .frame(width: wide ? min(max(geo.size.width * 0.36, 320), 400) : geo.size.width)
@@ -54,6 +55,7 @@ struct RootView: View {
             .presentationDetents([.medium, .large])
             .presentationCornerRadius(28)
         }
+        .sheet(isPresented: $showSettings) { SettingsView() }
         .onAppear { if selection == nil { selection = model.sorted.first?.id } }
         .onChange(of: phase) { _, p in if p == .active { model.refreshDay() } }
         .onReceive(ticker) { _ in model.refreshDay() }
@@ -77,6 +79,7 @@ struct Sidebar: View {
     let selection: String?
     let ns: Namespace.ID
     let onAdd: () -> Void
+    let onSettings: () -> Void
     let onOpen: (DayEvent) -> Void
 
     var body: some View {
@@ -88,6 +91,15 @@ struct Sidebar: View {
                         .font(.subheadline).foregroundStyle(.secondary)
                 }
                 Spacer()
+                Button(action: onSettings) {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundStyle(Color.primary)
+                        .frame(width: 40, height: 40)
+                        .background(Circle().fill(Color(.tertiarySystemFill)))
+                }
+                .buttonStyle(PressStyle())
+                .accessibilityLabel(L.settings)
                 Button(action: onAdd) {
                     Image(systemName: "plus")
                         .font(.system(size: 17, weight: .semibold))

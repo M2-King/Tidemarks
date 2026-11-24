@@ -4,12 +4,17 @@ import WidgetKit
 @main
 struct TidemarkApp: App {
     @StateObject private var model = AppModel()
+    @AppStorage("appearance", store: Prefs.defaults) private var appearance = "system"
+    @AppStorage("language", store: Prefs.defaults) private var language = "system"
 
     var body: some Scene {
         WindowGroup {
             RootView()
+                .id(language)
                 .environmentObject(model)
                 .tint(Theme.tint)
+                .preferredColorScheme(appearance == "light" ? .light : appearance == "dark" ? .dark : nil)
+                .onChange(of: language) { _, _ in model.refreshOutputs() }
         }
     }
 }
@@ -65,6 +70,9 @@ final class AppModel: ObservableObject {
         let t = Days.today()
         if t != today { withAnimation(Theme.spring) { today = t } }
     }
+
+    /// Re-render widgets and reminders, e.g. after a language change.
+    func refreshOutputs() { persist() }
 
     private func persist() {
         Store.save(events)
