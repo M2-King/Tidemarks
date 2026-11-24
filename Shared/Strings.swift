@@ -51,6 +51,7 @@ enum L {
     static var lunar: String { t("农历", "Lunar") }
     static var dateLbl: String { t("日期", "Date") }
     static var pin: String { t("置顶", "Pin to Top") }
+    static var pinFooter: String { t("置顶的日子会显示在列表最上方和小组件上。", "The pinned day appears first in the list and on your widgets.") }
     static var includeStart: String { t("起始日算作第 1 天", "Count start day as day 1") }
     static var remind: String { t("提醒", "Reminder") }
     static var remindNone: String { t("不提醒", "None") }
@@ -83,7 +84,7 @@ enum L {
     static var widgetEmpty: String { t("打开应用添加日子", "Open the app to add a day") }
     static var widgetSetByHand: String { t("长按小组件 → 编辑小组件，填写名称和日期", "Touch and hold → Edit Widget, then enter a name and date") }
     static var widgetName: String { t("汐日", "Tidemark") }
-    static var widgetDesc: String { t("显示置顶或最近的日子。长按小组件可选择要显示的日子。", "Shows your pinned or nearest day. Touch and hold to choose a day.") }
+    static var widgetDesc: String { t("显示置顶的日子，没有置顶时显示最近的日子。在应用里置顶即可更换。", "Shows your pinned day, or the nearest one. Pin a day in the app to change it.") }
     static var noDay30: String { t("该月只有 29 天，已调整为廿九", "This month has 29 days, so day 30 became day 29") }
 
     static func status(_ i: DayInfo) -> String {
