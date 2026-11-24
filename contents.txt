@@ -1,0 +1,37 @@
+Archive:  Tidemark.ipa
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  11-24-2026 15:39   Payload/
+        0  11-24-2026 15:39   Payload/Tidemark.app/
+        0  11-24-2026 15:39   Payload/Tidemark.app/_CodeSignature/
+     7723  11-24-2026 15:39   Payload/Tidemark.app/_CodeSignature/CodeResources
+        0  11-24-2026 15:39   Payload/Tidemark.app/zh-Hans.lproj/
+       73  11-24-2026 15:39   Payload/Tidemark.app/zh-Hans.lproj/InfoPlist.strings
+        0  11-24-2026 15:39   Payload/Tidemark.app/en.lproj/
+       77  11-24-2026 15:39   Payload/Tidemark.app/en.lproj/InfoPlist.strings
+     4763  11-24-2026 15:39   Payload/Tidemark.app/Tidemark.intentdefinition
+        0  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/
+        0  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkWidget.appex/
+        0  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkWidget.appex/_CodeSignature/
+     2962  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkWidget.appex/_CodeSignature/CodeResources
+        0  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkWidget.appex/zh-Hans.lproj/
+       73  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkWidget.appex/zh-Hans.lproj/InfoPlist.strings
+        0  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkWidget.appex/en.lproj/
+       77  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkWidget.appex/en.lproj/InfoPlist.strings
+   555056  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkWidget.appex/TidemarkWidget
+     4763  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkWidget.appex/Tidemark.intentdefinition
+      926  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkWidget.appex/Info.plist
+        0  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkIntents.appex/
+        0  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkIntents.appex/_CodeSignature/
+     2114  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkIntents.appex/_CodeSignature/CodeResources
+     4763  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkIntents.appex/Tidemark.intentdefinition
+   267792  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkIntents.appex/TidemarkIntents
+     1061  11-24-2026 15:39   Payload/Tidemark.app/PlugIns/TidemarkIntents.appex/Info.plist
+     1633  11-24-2026 15:39   Payload/Tidemark.app/AppIcon60x60@2x.png
+    49688  11-24-2026 15:39   Payload/Tidemark.app/Assets.car
+     2062  11-24-2026 15:39   Payload/Tidemark.app/AppIcon76x76@2x~ipad.png
+  1258496  11-24-2026 15:39   Payload/Tidemark.app/Tidemark
+     1564  11-24-2026 15:39   Payload/Tidemark.app/Info.plist
+        8  11-24-2026 15:39   Payload/Tidemark.app/PkgInfo
+---------                     -------
+  2165674                     32 files
