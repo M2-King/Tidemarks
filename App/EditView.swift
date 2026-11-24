@@ -112,8 +112,6 @@ struct EditView: View {
                 Section {
                     Toggle(L.pin, isOn: $draft.pinned)
                     Toggle(L.includeStart, isOn: $draft.includeStart)
-                } footer: {
-                    Text(L.pinFooter)
                 }
 
                 Section {

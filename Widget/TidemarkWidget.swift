@@ -7,27 +7,34 @@ struct DayEntry: TimelineEntry {
     let list: [DayEvent]
 }
 
-/// No configuration intent: signing tools change bundle IDs, which breaks intent-configured widgets.
-/// The widget shows the pinned day (or the nearest one) and, in larger sizes, the next few days.
-struct Provider: TimelineProvider {
+struct Provider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> DayEntry {
         DayEntry(date: Date(), today: Days.today(), list: Logic.sorted(Logic.seed(), today: Days.today()))
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (DayEntry) -> Void) {
-        let e = entry(at: Date())
-        completion(e.list.isEmpty && context.isPreview ? placeholder(in: context) : e)
+    func snapshot(for configuration: SelectDayIntent, in context: Context) async -> DayEntry {
+        let e = entry(configuration, at: Date())
+        return e.list.isEmpty && context.isPreview ? placeholder(in: context) : e
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<DayEntry>) -> Void) {
+    func timeline(for configuration: SelectDayIntent, in context: Context) async -> Timeline<DayEntry> {
         let now = Date()
         let midnight = Calendar.current.startOfDay(for: now.addingTimeInterval(86_400)).addingTimeInterval(5)
-        completion(Timeline(entries: [entry(at: now), entry(at: midnight)], policy: .after(midnight)))
+        return Timeline(entries: [entry(configuration, at: now), entry(configuration, at: midnight)], policy: .after(midnight))
     }
 
-    private func entry(at date: Date) -> DayEntry {
+    private func entry(_ c: SelectDayIntent, at date: Date) -> DayEntry {
         let today = Days.today(date)
-        return DayEntry(date: date, today: today, list: Logic.sorted(Store.load() ?? [], today: today))
+        var list = Logic.sorted(Store.load() ?? [], today: today)
+        if let id = c.day?.id, let i = list.firstIndex(where: { $0.id == id }) {
+            list.insert(list.remove(at: i), at: 0)
+        } else if let d = c.date {
+            let title = (c.name ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            let manual = DayEvent(id: "widget-manual", title: title, date: Days.iso(Days.fromLocalDate(d)),
+                                  includeStart: c.includeStart, created: 0)
+            list.insert(manual, at: 0)
+        }
+        return DayEntry(date: date, today: today, list: list)
     }
 }
 
@@ -157,11 +164,11 @@ struct TidemarkWidgetView: View {
     @ViewBuilder private var empty: some View {
         switch family {
         case .accessoryInline, .accessoryCircular, .accessoryRectangular:
-            Text(L.appTitle).font(.headline)
+            Text(L.zh ? "长按设置日子" : "Hold to set a day").font(.headline)
         default:
             VStack(spacing: 4) {
                 Text(L.emptyTitle).font(.system(size: 15, weight: .semibold))
-                Text(Store.shareMode != .none ? L.widgetEmpty : L.sWidgetBad)
+                Text(Store.shareMode != .none ? L.widgetEmpty : L.widgetSetByHand)
                     .font(.system(size: 12)).foregroundStyle(.secondary).multilineTextAlignment(.center)
             }
         }
@@ -249,7 +256,7 @@ struct TidemarkWidgetView: View {
 
 struct TidemarkWidget: Widget {
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: "TidemarkDays", provider: Provider()) { entry in
+        AppIntentConfiguration(kind: "TidemarkWidget", intent: SelectDayIntent.self, provider: Provider()) { entry in
             TidemarkWidgetView(entry: entry)
                 .containerBackground(for: .widget) { Color(.systemBackground) }
         }
@@ -264,5 +271,6 @@ struct TidemarkWidget: Widget {
 struct TidemarkWidgets: WidgetBundle {
     var body: some Widget {
         TidemarkWidget()
+        CheckWidget()
     }
 }
