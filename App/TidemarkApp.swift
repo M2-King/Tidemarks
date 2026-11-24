@@ -31,7 +31,10 @@ final class AppModel: ObservableObject {
     @Published var today: Int = Days.today()
 
     init() {
-        if let saved = Store.load() {
+        if var saved = Store.load() {
+            for i in saved.indices where saved[i].cal == "lunar" {
+                if let l = saved[i].lunar, let n = Lunar.toSolar(l.y, l.m, l.d, leap: l.leap) { saved[i].date = Days.iso(n) }
+            }
             events = saved
             Store.save(saved)
             WidgetCenter.shared.reloadAllTimelines()

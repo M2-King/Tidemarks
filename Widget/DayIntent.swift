@@ -29,10 +29,19 @@ struct DayQuery: EntityQuery {
 
 struct SelectDayIntent: WidgetConfigurationIntent {
     static let title: LocalizedStringResource = "Choose a Day"
-    static let description = IntentDescription("Choose which day this widget shows. Leave empty to show your pinned or nearest day.")
+    static let description = IntentDescription("选择应用里的日子，或直接填写名称和日期。Pick a day from the app, or type a name and date.")
 
-    @Parameter(title: "Day")
+    @Parameter(title: "从应用选择 / Day from the app")
     var day: DayEntity?
+
+    @Parameter(title: "名称 / Name")
+    var name: String?
+
+    @Parameter(title: "日期 / Date")
+    var date: Date?
+
+    @Parameter(title: "起始日算第 1 天 / Count start day", default: false)
+    var includeStart: Bool
 
     init() {}
 }

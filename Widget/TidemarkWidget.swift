@@ -28,6 +28,11 @@ struct Provider: AppIntentTimelineProvider {
         var list = Logic.sorted(Store.load() ?? [], today: today)
         if let id = c.day?.id, let i = list.firstIndex(where: { $0.id == id }) {
             list.insert(list.remove(at: i), at: 0)
+        } else if let d = c.date {
+            let title = (c.name ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            let manual = DayEvent(id: "widget-manual", title: title, date: Days.iso(Days.fromLocalDate(d)),
+                                  includeStart: c.includeStart, created: 0)
+            list.insert(manual, at: 0)
         }
         return DayEntry(date: date, today: today, list: list)
     }
@@ -117,6 +122,28 @@ struct Rows: View {
     }
 }
 
+/// Gregorian date, lunar date and the years-months-days breakdown for one day.
+struct Details: View {
+    let ev: DayEvent
+    let today: Int
+    var body: some View {
+        let i = DayInfo(ev, today: today), l = Lunar.fromSolar(i.n)
+        VStack(alignment: .leading, spacing: 10) {
+            line(L.solar, L.date(i.n) + " " + L.weekday(i.n))
+            line(L.lunar, Lunar.text(i.n) + " · " + L.lunarYear(l.y))
+            let b = Logic.breakdown(ev, i, today: today)
+            if !b.isEmpty { line(L.zh ? "相当于" : "That is", b) }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+    private func line(_ k: String, _ v: String) -> some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text(L.zh ? k : k.uppercased()).font(.system(size: 10, weight: .semibold)).tracking(L.zh ? 0 : 0.6).foregroundStyle(.secondary)
+            Text(v).font(.system(size: 13, weight: .medium)).lineLimit(1).minimumScaleFactor(0.8)
+        }
+    }
+}
+
 struct VLine: View {
     var body: some View { Rectangle().fill(Color(.separator)).frame(width: 0.5) }
 }
@@ -137,11 +164,11 @@ struct TidemarkWidgetView: View {
     @ViewBuilder private var empty: some View {
         switch family {
         case .accessoryInline, .accessoryCircular, .accessoryRectangular:
-            Text(L.appTitle).font(.headline)
+            Text(L.zh ? "长按设置日子" : "Hold to set a day").font(.headline)
         default:
             VStack(spacing: 4) {
                 Text(L.emptyTitle).font(.system(size: 15, weight: .semibold))
-                Text(Store.shareMode != .none ? L.widgetEmpty : (L.zh ? "打开一次汐日应用，同步日子到小组件" : "Open Tidemark once to share your days with widgets"))
+                Text(Store.shareMode != .none ? L.widgetEmpty : L.widgetSetByHand)
                     .font(.system(size: 12)).foregroundStyle(.secondary).multilineTextAlignment(.center)
             }
         }
@@ -191,7 +218,7 @@ struct TidemarkWidgetView: View {
             HStack(spacing: 16) {
                 Feature(ev: ev, today: today, title: 15, num: 46).frame(width: 130)
                 VLine()
-                Rows(items: Array(rest.prefix(3)), today: today)
+                if rest.isEmpty { Details(ev: ev, today: today) } else { Rows(items: Array(rest.prefix(3)), today: today) }
             }
 
         case .systemLarge:
@@ -199,7 +226,8 @@ struct TidemarkWidgetView: View {
                 header(today)
                 Feature(ev: ev, today: today, title: 20, num: 72)
                 Divider()
-                Rows(items: Array(rest.prefix(4)), today: today, title: 15, num: 22).frame(maxHeight: 150)
+                if rest.isEmpty { Details(ev: ev, today: today).frame(maxHeight: 150) }
+                else { Rows(items: Array(rest.prefix(4)), today: today, title: 15, num: 22).frame(maxHeight: 150) }
             }
 
         case .systemExtraLarge:
@@ -208,7 +236,7 @@ struct TidemarkWidgetView: View {
                 HStack(spacing: 24) {
                     Feature(ev: ev, today: today, title: 22, num: 96).frame(width: 280)
                     VLine()
-                    Rows(items: Array(rest.prefix(6)), today: today, title: 15, num: 22)
+                    if rest.isEmpty { Details(ev: ev, today: today) } else { Rows(items: Array(rest.prefix(6)), today: today, title: 15, num: 22) }
                 }
             }
 
