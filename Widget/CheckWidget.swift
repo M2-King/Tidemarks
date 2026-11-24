@@ -5,17 +5,21 @@ import WidgetKit
 struct CheckEntry: TimelineEntry {
     let date: Date
     let groupOK: Bool
+    let keychain: String
     let count: Int
 }
 
 struct CheckProvider: TimelineProvider {
-    func placeholder(in context: Context) -> CheckEntry { CheckEntry(date: Date(), groupOK: true, count: 0) }
+    func placeholder(in context: Context) -> CheckEntry { CheckEntry(date: Date(), groupOK: true, keychain: "-", count: 0) }
     func getSnapshot(in context: Context, completion: @escaping (CheckEntry) -> Void) { completion(make()) }
     func getTimeline(in context: Context, completion: @escaping (Timeline<CheckEntry>) -> Void) {
         completion(Timeline(entries: [make()], policy: .after(Date().addingTimeInterval(900))))
     }
     private func make() -> CheckEntry {
-        CheckEntry(date: Date(), groupOK: Store.sharedContainerAvailable, count: Store.load()?.count ?? 0)
+        let kc = SharedKeychain.read()
+        return CheckEntry(date: Date(), groupOK: Store.sharedContainerAvailable,
+                          keychain: kc != nil ? "OK" : "\(SharedKeychain.teamPrefix == nil ? "no team" : "error") \(SharedKeychain.lastStatus)",
+                          count: Store.load()?.count ?? 0)
     }
 }
 
@@ -27,6 +31,7 @@ struct CheckWidget: Widget {
                 Label("Widget running", systemImage: "checkmark.circle.fill").font(.system(size: 12))
                 Label(e.groupOK ? "App Group OK" : "No App Group", systemImage: e.groupOK ? "checkmark.circle.fill" : "xmark.circle.fill")
                     .font(.system(size: 12))
+                Text("Keychain: \(e.keychain)").font(.system(size: 12))
                 Text("Days found: \(e.count)").font(.system(size: 12))
                 Text(e.date, style: .time).font(.system(size: 11)).foregroundStyle(.secondary)
             }

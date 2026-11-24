@@ -9,6 +9,7 @@ struct SettingsView: View {
     @AppStorage("defaultRemind", store: Prefs.defaults) private var defaultRemind = "none"
     @AppStorage("defaultTime", store: Prefs.defaults) private var defaultTime = "09:00"
     @State private var notif: UNAuthorizationStatus = .notDetermined
+    private let shareMode = Store.shareMode
 
     private static let remindOptions = ["none", "0", "1", "3", "7", "milestone"]
 
@@ -76,11 +77,11 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    LabeledContent(L.sWidgetData, value: Store.sharedContainerAvailable ? L.sAvailable : L.sUnavailable)
+                    LabeledContent(L.sWidgetData, value: shareMode == .appGroup ? L.sAvailable : shareMode == .keychain ? L.sAvailableKeychain : L.sUnavailable)
                 } header: {
                     Text(L.sWidgets)
                 } footer: {
-                    Text(Store.sharedContainerAvailable ? L.sWidgetOK : L.sWidgetBad)
+                    Text(shareMode == .appGroup ? L.sWidgetOK : shareMode == .keychain ? L.sWidgetKeychain : L.sWidgetBad)
                 }
 
                 Section {

@@ -33,6 +33,8 @@ final class AppModel: ObservableObject {
     init() {
         if let saved = Store.load() {
             events = saved
+            Store.save(saved)
+            WidgetCenter.shared.reloadAllTimelines()
         } else {
             let s = Logic.seed()
             events = s

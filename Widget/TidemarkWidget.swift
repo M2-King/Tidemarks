@@ -141,7 +141,7 @@ struct TidemarkWidgetView: View {
         default:
             VStack(spacing: 4) {
                 Text(L.emptyTitle).font(.system(size: 15, weight: .semibold))
-                Text(Store.sharedContainerAvailable ? L.widgetEmpty : (L.zh ? "签名缺少 App Group，小组件读不到日子" : "Signed without the App Group, so widgets can’t read your days"))
+                Text(Store.shareMode != .none ? L.widgetEmpty : (L.zh ? "打开一次汐日应用，同步日子到小组件" : "Open Tidemark once to share your days with widgets"))
                     .font(.system(size: 12)).foregroundStyle(.secondary).multilineTextAlignment(.center)
             }
         }

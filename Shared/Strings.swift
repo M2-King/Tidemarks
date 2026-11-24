@@ -29,10 +29,12 @@ enum L {
     static var sOpenSettings: String { t("在系统设置中开启", "Turn On in Settings") }
     static var sWidgets: String { t("小组件", "Widgets") }
     static var sWidgetData: String { t("数据共享", "Data Sharing") }
-    static var sAvailable: String { t("正常", "Working") }
+    static var sAvailable: String { t("正常（App Group）", "Working (App Group)") }
+    static var sAvailableKeychain: String { t("正常（钥匙串）", "Working (Keychain)") }
+    static var sWidgetKeychain: String { t("此签名没有 App Group，已改用钥匙串共享，小组件可以读取你的日子。", "This signature has no App Group, so days are shared through the keychain. Widgets can read them.") }
     static var sUnavailable: String { t("不可用", "Unavailable") }
     static var sWidgetOK: String { t("小组件可以读取你的日子。", "Widgets can read your days.") }
-    static var sWidgetBad: String { t("此签名没有 App Group，小组件无法读取你的日子。请用支持 App Group 的证书重新签名。", "This signature has no App Group, so widgets can’t read your days. Re-sign with a certificate that supports App Groups.") }
+    static var sWidgetBad: String { t("此签名既没有 App Group，也不允许钥匙串共享，小组件无法读取你的日子。", "This signature allows neither an App Group nor keychain sharing, so widgets can’t read your days.") }
     static var sAbout: String { t("关于", "About") }
     static var sVersion: String { t("版本", "Version") }
     static var upcoming: String { t("倒数", "Upcoming") }
