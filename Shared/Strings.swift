@@ -34,7 +34,7 @@ enum L {
     static var sWidgetKeychain: String { t("此签名没有 App Group，已改用钥匙串共享，小组件可以读取你的日子。", "This signature has no App Group, so days are shared through the keychain. Widgets can read them.") }
     static var sUnavailable: String { t("不可用", "Unavailable") }
     static var sWidgetOK: String { t("小组件可以读取你的日子。", "Widgets can read your days.") }
-    static var sWidgetBad: String { t("此签名不支持应用和小组件共享数据。请长按小组件 → 编辑小组件，直接填写名称和日期。换用支持 App Group 的证书后可自动同步。", "This signature can’t share data between the app and widgets. Touch and hold a widget → Edit Widget, and enter a name and date. A certificate with an App Group enables automatic syncing.") }
+    static var sWidgetBad: String { t("此签名不支持应用和小组件共享数据，小组件无法读取你的日子。请用带 App Group 的证书签名。", "This signature can’t share data between the app and widgets. Sign with a certificate that has an App Group.") }
     static var sAbout: String { t("关于", "About") }
     static var sVersion: String { t("版本", "Version") }
     static var upcoming: String { t("倒数", "Upcoming") }
@@ -81,9 +81,8 @@ enum L {
     static var emptyText: String { t("添加一个重要的日子，开始倒数或纪念。", "Add an important day to count down to or count up from.") }
     static var addFirst: String { t("添加日子", "Add a Day") }
     static var widgetEmpty: String { t("打开应用添加日子", "Open the app to add a day") }
-    static var widgetSetByHand: String { t("长按小组件 → 编辑小组件，填写名称和日期", "Touch and hold → Edit Widget, then enter a name and date") }
     static var widgetName: String { t("汐日", "Tidemark") }
-    static var widgetDesc: String { t("显示置顶或最近的日子。长按小组件可选择要显示的日子。", "Shows your pinned or nearest day. Touch and hold to choose a day.") }
+    static var widgetDesc: String { t("显示置顶或最近的日子。长按小组件 → 编辑小组件，可选择要显示的日子。", "Shows your pinned or nearest day. Touch and hold → Edit Widget to choose a day.") }
     static var noDay30: String { t("该月只有 29 天，已调整为廿九", "This month has 29 days, so day 30 became day 29") }
 
     static func status(_ i: DayInfo) -> String {

@@ -28,11 +28,6 @@ struct Provider: AppIntentTimelineProvider {
         var list = Logic.sorted(Store.load() ?? [], today: today)
         if let id = c.day?.id, let i = list.firstIndex(where: { $0.id == id }) {
             list.insert(list.remove(at: i), at: 0)
-        } else if let d = c.date {
-            let title = (c.name ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-            let manual = DayEvent(id: "widget-manual", title: title, date: Days.iso(Days.fromLocalDate(d)),
-                                  includeStart: c.includeStart, created: 0)
-            list.insert(manual, at: 0)
         }
         return DayEntry(date: date, today: today, list: list)
     }
@@ -164,11 +159,11 @@ struct TidemarkWidgetView: View {
     @ViewBuilder private var empty: some View {
         switch family {
         case .accessoryInline, .accessoryCircular, .accessoryRectangular:
-            Text(L.zh ? "长按设置日子" : "Hold to set a day").font(.headline)
+            Text(L.appTitle).font(.headline)
         default:
             VStack(spacing: 4) {
                 Text(L.emptyTitle).font(.system(size: 15, weight: .semibold))
-                Text(Store.shareMode != .none ? L.widgetEmpty : L.widgetSetByHand)
+                Text(Store.shareMode != .none ? L.widgetEmpty : L.sWidgetBad)
                     .font(.system(size: 12)).foregroundStyle(.secondary).multilineTextAlignment(.center)
             }
         }
@@ -271,6 +266,5 @@ struct TidemarkWidget: Widget {
 struct TidemarkWidgets: WidgetBundle {
     var body: some Widget {
         TidemarkWidget()
-        CheckWidget()
     }
 }
