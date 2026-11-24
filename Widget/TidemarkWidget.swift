@@ -33,6 +33,26 @@ struct Provider: AppIntentTimelineProvider {
     }
 }
 
+/// Same data without a configuration intent.
+struct StaticProvider: TimelineProvider {
+    func placeholder(in context: Context) -> DayEntry {
+        DayEntry(date: Date(), today: Days.today(), list: Logic.sorted(Logic.seed(), today: Days.today()))
+    }
+    func getSnapshot(in context: Context, completion: @escaping (DayEntry) -> Void) {
+        let e = make(Date())
+        completion(e.list.isEmpty && context.isPreview ? placeholder(in: context) : e)
+    }
+    func getTimeline(in context: Context, completion: @escaping (Timeline<DayEntry>) -> Void) {
+        let now = Date()
+        let midnight = Calendar.current.startOfDay(for: now.addingTimeInterval(86_400)).addingTimeInterval(5)
+        completion(Timeline(entries: [make(now), make(midnight)], policy: .after(midnight)))
+    }
+    private func make(_ date: Date) -> DayEntry {
+        let today = Days.today(date)
+        return DayEntry(date: date, today: today, list: Logic.sorted(Store.load() ?? [], today: today))
+    }
+}
+
 // MARK: - Pieces
 
 private func name(_ e: DayEvent) -> String { e.title.isEmpty ? L.untitled : e.title }
@@ -249,13 +269,28 @@ struct TidemarkWidgetView: View {
     }
 }
 
+/// Pinned or nearest day, no settings.
+struct TidemarkStaticWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "TidemarkStatic", provider: StaticProvider()) { entry in
+            TidemarkWidgetView(entry: entry)
+                .containerBackground(for: .widget) { Color(.systemBackground) }
+        }
+        .configurationDisplayName(Text(L.widgetName))
+        .description(Text(L.zh ? "显示置顶的日子，没有置顶时显示最近的日子。" : "Shows your pinned day, or the nearest one."))
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge,
+                            .accessoryCircular, .accessoryRectangular, .accessoryInline])
+    }
+}
+
+/// A day chosen in Edit Widget.
 struct TidemarkWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "TidemarkWidget", intent: SelectDayIntent.self, provider: Provider()) { entry in
             TidemarkWidgetView(entry: entry)
                 .containerBackground(for: .widget) { Color(.systemBackground) }
         }
-        .configurationDisplayName(Text(L.widgetName))
+        .configurationDisplayName(Text(L.widgetName + (L.zh ? " · 选择日子" : " · Choose a Day")))
         .description(Text(L.widgetDesc))
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge,
                             .accessoryCircular, .accessoryRectangular, .accessoryInline])
@@ -265,6 +300,7 @@ struct TidemarkWidget: Widget {
 @main
 struct TidemarkWidgets: WidgetBundle {
     var body: some Widget {
+        TidemarkStaticWidget()
         TidemarkWidget()
     }
 }
