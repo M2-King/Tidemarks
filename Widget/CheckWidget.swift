@@ -29,7 +29,7 @@ struct CheckWidget: Widget {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Tidemark Check").font(.system(size: 13, weight: .bold))
                 Label("Widget running", systemImage: "checkmark.circle.fill").font(.system(size: 12))
-                Label(e.groupOK ? "App Group OK" : "No App Group", systemImage: e.groupOK ? "checkmark.circle.fill" : "xmark.circle.fill")
+                Label(e.groupOK ? "Group: \(Store.groupID)" : "No App Group", systemImage: e.groupOK ? "checkmark.circle.fill" : "xmark.circle.fill")
                     .font(.system(size: 12))
                 Text("Keychain: \(e.keychain)").font(.system(size: 12))
                 Text("Days found: \(e.count)").font(.system(size: 12))

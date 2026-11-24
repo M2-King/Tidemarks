@@ -78,6 +78,8 @@ struct SettingsView: View {
 
                 Section {
                     LabeledContent(L.sWidgetData, value: shareMode == .appGroup ? L.sAvailable : shareMode == .keychain ? L.sAvailableKeychain : L.sUnavailable)
+                    LabeledContent("App Group", value: Store.sharedContainerAvailable ? Store.groupID : (Store.provisionedGroups().first.map { $0 + " ✕" } ?? "—"))
+                        .font(.footnote)
                 } header: {
                     Text(L.sWidgets)
                 } footer: {

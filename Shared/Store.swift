@@ -3,7 +3,34 @@ import Foundation
 /// Days are saved as JSON. The widget reads them from the App Group when the signature has one,
 /// otherwise from the shared keychain.
 enum Store {
-    static let groupID = "group.com.tidemark.shared"
+    static let defaultGroupID = "group.com.tidemark.shared"
+
+    /// Signing tools often replace the App Group with the certificate's own one, so read the real one
+    /// from the embedded provisioning profile (the widget falls back to the containing app's profile).
+    static let groupID: String = {
+        let groups = provisionedGroups()
+        return groups.first { FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: $0) != nil }
+            ?? groups.first ?? defaultGroupID
+    }()
+
+    static func provisionedGroups() -> [String] {
+        let here = Bundle.main.bundleURL
+        let candidates = [
+            here.appendingPathComponent("embedded.mobileprovision"),
+            here.deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("embedded.mobileprovision")
+        ]
+        for url in candidates {
+            guard let data = try? Data(contentsOf: url),
+                  let start = data.range(of: Data("<?xml".utf8)),
+                  let end = data.range(of: Data("</plist>".utf8), in: start.upperBound..<data.endIndex),
+                  let plist = try? PropertyListSerialization.propertyList(from: data.subdata(in: start.lowerBound..<end.upperBound), format: nil) as? [String: Any],
+                  let ent = plist["Entitlements"] as? [String: Any],
+                  let groups = ent["com.apple.security.application-groups"] as? [String], !groups.isEmpty
+            else { continue }
+            return groups.filter { !$0.contains("*") }
+        }
+        return []
+    }
 
     enum ShareMode { case appGroup, keychain, none }
 
