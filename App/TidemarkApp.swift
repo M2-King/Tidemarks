@@ -39,7 +39,9 @@ final class AppModel: ObservableObject {
 
     var sections: [Section] {
         var up: [DayEvent] = [], past: [DayEvent] = []
-        for e in sorted { (DayInfo(e, today: today).state == .past ? { past.append(e) } : { up.append(e) })() }
+        for e in sorted {
+            if DayInfo(e, today: today).state == .past { past.append(e) } else { up.append(e) }
+        }
         var out: [Section] = []
         if !up.isEmpty { out.append(Section(id: "up", title: L.upcoming, items: up)) }
         if !past.isEmpty { out.append(Section(id: "past", title: L.since, items: past)) }
